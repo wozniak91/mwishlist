@@ -224,25 +224,26 @@ class Mwishlist extends Module
      */
     public function hookHeader()
     {
-        $this->context->controller->addJS($this->_path.'/views/js/front.js');
-        $this->context->controller->addCSS($this->_path.'/views/css/front.css');
+        $this->context->controller->addJS($this->_path.'/views/js/front/mwishlist.js');
+        $this->context->controller->addCSS($this->_path.'/views/css/front/mwishlist.css');
     }
 
     public function hookDisplayHeader()
     {
         /* Place your code here. */
+        $this->context->controller->addJS($this->_path.'/views/js/front/mwishlist.js');
+        $this->context->controller->addCSS($this->_path.'/views/css/front/mwishlist.css');
     }
 
     public function hookDisplayTop()
     {
-
-        $wishlist = false;
-
-        // if(isset($this->context->cookie->id_wishlist)) {
-
-        //     $id_wishlist = (int)$this->context->cookie->id_wishlist;
-        //     $wishlist = new Wishlist($id_wishlist);
-        // }
+        if($this->context->cookie->id_wishlist) {
+            $id_wishlist = (int)$this->context->cookie->id_wishlist;
+            
+            $wishlist = new Wishlist($id_wishlist);
+        } else {
+            $wishlist = new Wishlist;
+        }
 
         $this->context->smarty->assign('wishlist', $wishlist);
 

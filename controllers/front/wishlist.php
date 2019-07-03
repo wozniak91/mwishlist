@@ -3,17 +3,30 @@
 
 class MwishlistWishlistModuleFrontController extends ModuleFrontController
 {
-	/**
+    public $context;
+    public $wishlist;
+
+    /**
 	 * @see FrontController::initContent()
 	 */
-	public $context;
-
 	public function initContent()
 	{
+        
+        $this->display_column_left = false;
+
         $this->context = Context::getContext();
+        
+        if($id_wishlist = $this->context->cookie->id_wishlist) {
 
-		parent::initContent();
+            $this->wishlist = new Wishlist((int)$id_wishlist);
+        } else {
 
+            $this->wishlist = new Wishlist;
+        }
+
+        parent::initContent();
+        $this->wishlist->products = $this->wishlist->getProducts($this->context->language->id, $this->context->shop->id);
+        $this->context->smarty->assign('wishlist', $this->wishlist);
 		$this->setTemplate('wishlist.tpl');
 	}
 

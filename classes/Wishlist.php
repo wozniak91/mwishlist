@@ -15,7 +15,7 @@ class Wishlist extends ObjectModel
     /** @var string Object last modification date */
     public $date_upd;
 
-    public $products;
+    public $productsNb = 0;
 
     public static $definition = array(
         'table' => 'mwishlist',
@@ -31,7 +31,36 @@ class Wishlist extends ObjectModel
         )
     );
 
+
+    public function __construct($id = null, $id_lang = null)
+    {
+        parent::__construct($id);
+
+        if (!is_null($id_lang)) {
+            $this->id_lang = (int)(Language::getLanguage($id_lang) !== false) ? $id_lang : Configuration::get('PS_LANG_DEFAULT');
+        }
+
+        $this->productsNb = $this->getProductNb();
+    }
+
+    public function getProductNb() {
+
+        return Db::getInstance()->getValue('SELECT count(id_product) FROM `'._DB_PREFIX_.'mwishlist_products` WHERE id_wishlist = ' . (int)$this->id );
+    }
+
+    public function checkProductStatus($id_product) {
+
+        $sql = 'SELECT count(wp.id_product) FROM `'._DB_PREFIX_.'mwishlist_products` wp 
+            LEFT JOIN `'._DB_PREFIX_.'product` p ON (p.`id_product` = wp.`id_product`)
+            WHERE wp.`id_product` = ' . (int)$id_product . ' AND p.`active` = 1';
+         
+        return Db::getInstance()->getValue($sql);
+    }
+    
     public function addProduct($id_product) {
+
+        if($this->checkProductStatus($id_product))
+            return false;
 
         return Db::getInstance()->insert('mwishlist_products', array(
             'id_wishlist'   => (int)$this->id,
