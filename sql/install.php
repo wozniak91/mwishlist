@@ -27,6 +27,7 @@ $sql = array();
 
 $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'mwishlist` (
     `id_wishlist` int(11) NOT NULL AUTO_INCREMENT,
+    `id_customer` int(10) unsigned NOT NULL DEFAULT 0,
     `secure_key` varchar(32) DEFAULT NULL,
     `date_add` datetime NOT NULL,
     `date_upd` datetime NOT NULL,

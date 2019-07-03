@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+include_once(_PS_MODULE_DIR_.'mwishlist/classes/Wishlist.php');
+
 class Mwishlist extends Module
 {
     protected $config_form = false;
@@ -44,6 +46,8 @@ class Mwishlist extends Module
          * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
          */
         $this->bootstrap = true;
+
+        $this->controllers = array('wishlist');
 
         parent::__construct();
 
@@ -231,6 +235,17 @@ class Mwishlist extends Module
 
     public function hookDisplayTop()
     {
-        /* Place your code here. */
+
+        $wishlist = false;
+
+        // if(isset($this->context->cookie->id_wishlist)) {
+
+        //     $id_wishlist = (int)$this->context->cookie->id_wishlist;
+        //     $wishlist = new Wishlist($id_wishlist);
+        // }
+
+        $this->context->smarty->assign('wishlist', $wishlist);
+
+        return $this->display(__FILE__, 'views/templates/hook/mwishlist.tpl');
     }
 }
