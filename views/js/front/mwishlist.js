@@ -1,27 +1,92 @@
-/**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*
-* Don't forget to prefix your containers with your own identifier
-* to avoid any conflicts with others containers.
-*/
+var ajaxWishlist;
+
+$(document).ready(function() {
+    ajaxWishlist = new Wishlist('wishlist__icon', 'wishlist__counter');
+});
+
+$(document).on('click', '.wishlist__button', function() {
+    var id_product = $(this).attr('data-id-product');
+    ajaxWishlist.toggle(id_product, $(this));
+});
+
+$(document).on('click', '.wishlist-product__remove', function() {
+    var id_product = $(this).attr('data-id-product');
+    ajaxWishlist.remove(id_product, $(this));
+});
+
+var Wishlist = function(iconClass, counterClass) {
+    this.productsNb = 0;
+    this.counter = $('.' + counterClass);
+    this.icon = $('.' + iconClass);
+};
+
+Wishlist.prototype.add = function(id_product) {
+    
+    var _this = this;
+
+    $.ajax({
+        type: 'POST',
+        url: wishlist_url,
+        data: {
+            'ajax': 1,
+            'id_product': id_product,
+            'action': 'addproduct'
+        },
+        dataType: 'json',
+        success: function(json) {
+            if(!json.hasError) {
+                _this.productsNb = json.wishlist.productsNb;
+                _this.refresh();
+            }
+        }
+      });
+}
+
+Wishlist.prototype.remove = function(id_product, el = false) {
+    var _this = this;
+    $.ajax({
+        type: 'POST',
+        url: wishlist_url,
+        data: {
+            'ajax': 1,
+            'id_product': id_product,
+            'action': 'removeproduct'
+        },
+        dataType: 'json',
+        success: function(json) {
+            if(!json.hasError) {
+                _this.productsNb = json.wishlist.productsNb;
+                _this.refresh();
+                el.parent().parent().fadeOut().delay(500).remove();
+
+            }
+        }
+      });
+}
+
+Wishlist.prototype.toggle = function(id_product, el = false) {
+    var _this = this;
+    $.ajax({
+        type: 'POST',
+        url: wishlist_url,
+        data: {
+            'ajax': 1,
+            'id_product': id_product,
+            'action': 'toggleproduct'
+        },
+        dataType: 'json',
+        success: function(json) {
+            if(!json.hasError) {
+                _this.productsNb = json.wishlist.productsNb;
+                _this.refresh();
+                if(el) {
+                    el.toggleClass('wishlist__button--liked');
+                }
+            }
+        }
+      });
+}
+
+Wishlist.prototype.refresh = function() {
+    this.counter.text(this.productsNb);
+}

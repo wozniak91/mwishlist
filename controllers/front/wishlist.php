@@ -58,9 +58,6 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
     public function ajaxProcessAddProduct()
     {
 
-        $id_lang = $this->context->language->id;
-        $id_shop = $this->context->shop->id;
-
         if($id_wishlist = $this->context->cookie->id_wishlist) {
 
             $wishlist = new Wishlist((int)$id_wishlist);
@@ -79,11 +76,70 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
         }
 
         $result = [
+            'hasError' => false,
             'wishlist' => $wishlist,
-            'products' => $wishlist->getProducts($id_lang, $id_shop)
         ];
         
         return die(Tools::jsonEncode($result));
+    }
+    
+    public function ajaxProcessRemoveProduct()
+    {
+
+        if($id_wishlist = $this->context->cookie->id_wishlist) {
+
+            $wishlist = new Wishlist((int)$id_wishlist);
+
+            if(Tools::getIsset('id_product')) {
+                $id_product = Tools::getValue('id_product');
+                $wishlist->removeProduct((int)$id_product);
+            }
+            $result = [
+                'hasError' => false,
+                'wishlist' => $wishlist,
+            ];
+
+        } else {
+
+            $result = [
+                'hasError' => true,
+                'error' => $this->module->l('You do not have a wish list')
+            ];   
+        }
+        
+        return die(Tools::jsonEncode($result));
 	}
+
+    public function ajaxProcessToggleProduct()
+    {
+
+        if($id_wishlist = $this->context->cookie->id_wishlist) {
+
+            $wishlist = new Wishlist((int)$id_wishlist);
+
+            if(Tools::getIsset('id_product')) {
+                $id_product = Tools::getValue('id_product');
+                if($wishlist->checkProductStatus($id_product)) {
+                    $wishlist->removeProduct((int)$id_product);
+                } else {
+                    $wishlist->addProduct((int)$id_product);
+                }
+                
+            }
+            $result = [
+                'hasError' => false,
+                'wishlist' => $wishlist,
+            ];
+
+        } else {
+
+            $result = [
+                'hasError' => true,
+                'error' => $this->module->l('You do not have a wish list')
+            ];   
+        }
+        
+        return die(Tools::jsonEncode($result));
+    }
 
 }

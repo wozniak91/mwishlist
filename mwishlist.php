@@ -73,7 +73,8 @@ class Mwishlist extends Module
             $this->registerHook('header') &&
             $this->registerHook('backOfficeHeader') &&
             $this->registerHook('displayHeader') &&
-            $this->registerHook('displayTop');
+            $this->registerHook('displayTop') &&
+            $this->registerHook('displayProductListReviews');
     }
 
     public function uninstall()
@@ -224,13 +225,12 @@ class Mwishlist extends Module
      */
     public function hookHeader()
     {
-        $this->context->controller->addJS($this->_path.'/views/js/front/mwishlist.js');
-        $this->context->controller->addCSS($this->_path.'/views/css/front/mwishlist.css');
+        // $this->context->controller->addJS($this->_path.'/views/js/front/mwishlist.js');
+        // $this->context->controller->addCSS($this->_path.'/views/css/front/mwishlist.css');
     }
 
     public function hookDisplayHeader()
     {
-        /* Place your code here. */
         $this->context->controller->addJS($this->_path.'/views/js/front/mwishlist.js');
         $this->context->controller->addCSS($this->_path.'/views/css/front/mwishlist.css');
     }
@@ -239,7 +239,6 @@ class Mwishlist extends Module
     {
         if($this->context->cookie->id_wishlist) {
             $id_wishlist = (int)$this->context->cookie->id_wishlist;
-            
             $wishlist = new Wishlist($id_wishlist);
         } else {
             $wishlist = new Wishlist;
@@ -248,5 +247,26 @@ class Mwishlist extends Module
         $this->context->smarty->assign('wishlist', $wishlist);
 
         return $this->display(__FILE__, 'views/templates/hook/mwishlist.tpl');
+    }
+
+    public function hookDisplayProductListReviews($params) {
+
+        $id_product = $params['product']['id_product'];
+
+        if($this->context->cookie->id_wishlist) {
+            $id_wishlist = (int)$this->context->cookie->id_wishlist;
+            $wishlist = new Wishlist($id_wishlist);
+        } else {
+            $wishlist = new Wishlist;
+        }
+
+        $isLiked = $wishlist->checkProductStatus($id_product);
+
+        $this->context->smarty->assign([
+            'id_product' => $id_product,
+            'isLiked' => $isLiked
+        ]);
+
+        return $this->display(__FILE__, 'views/templates/hook/mwishlist_reviews.tpl');
     }
 }

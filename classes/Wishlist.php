@@ -45,7 +45,7 @@ class Wishlist extends ObjectModel
 
     public function getProductNb() {
 
-        return Db::getInstance()->getValue('SELECT count(id_product) FROM `'._DB_PREFIX_.'mwishlist_products` WHERE id_wishlist = ' . (int)$this->id );
+        return (int)Db::getInstance()->getValue('SELECT count(*) FROM `'._DB_PREFIX_.'mwishlist_products` WHERE id_wishlist = ' . (int)$this->id );
     }
 
     public function checkProductStatus($id_product) {
@@ -62,15 +62,27 @@ class Wishlist extends ObjectModel
         if($this->checkProductStatus($id_product))
             return false;
 
-        return Db::getInstance()->insert('mwishlist_products', array(
+        if($result = Db::getInstance()->insert('mwishlist_products', array(
             'id_wishlist'   => (int)$this->id,
             'id_product'    => (int)$id_product,
-        ));
+        ))) {
+            $this->productsNb = $this->getProductNb();
+            return $result;
+        } else {
+            return false;
+        }
+        
     }
 
     public function removeProduct($id_product) {
 
-        return Db::getInstance()->delete('mwishlist_products', 'id_wishlist = '.(int)$this->id.' AND id_product = '.(int)$id_product);
+        if($result = Db::getInstance()->delete('mwishlist_products', 'id_wishlist = '.(int)$this->id.' AND id_product = '.(int)$id_product)) {
+            $this->productsNb = $this->getProductNb();
+            return $result;
+        } else {
+            return false;
+        }
+        
     }
 
     public function getProducts($id_lang, $id_shop) {
