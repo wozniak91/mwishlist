@@ -43,6 +43,7 @@
 .wishlist__button {
     color: #999;
     position: absolute;
+    z-index: 1;
     top: 0;
     transform: translateY(-100%);
     right: 0;
@@ -68,6 +69,16 @@
     align-items: center;
     border-bottom: 1px solid #eee;
 }
+.wishlist-product:first-child {
+    border-top: 1px solid #eee;
+}
+.my-wishlist__actions {
+    padding: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 .wishlist-product * {
     font-size: 14px;
 }

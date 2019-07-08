@@ -116,18 +116,18 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
         if($id_wishlist = $this->context->cookie->id_wishlist) {
 
             $wishlist = new Wishlist((int)$id_wishlist);
+            $status = false;
 
             if(Tools::getIsset('id_product')) {
                 $id_product = Tools::getValue('id_product');
                 if($wishlist->checkProductStatus($id_product)) {
-                    $wishlist->removeProduct((int)$id_product);
+                    $status = $wishlist->removeProduct((int)$id_product);
                 } else {
-                    $wishlist->addProduct((int)$id_product);
+                    $status = $wishlist->addProduct((int)$id_product);
                 }
-                
             }
             $result = [
-                'hasError' => false,
+                'hasError' => !$status,
                 'wishlist' => $wishlist,
             ];
 

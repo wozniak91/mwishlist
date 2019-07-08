@@ -1,15 +1,28 @@
 <div class="my-wishlist">
     <h1 class="page-heading">{l s='My wishlist' mod='mwishlist'}</h1>
+    <div class="my-wishlist__actions"{if !$wishlist->productsNb} style="display: none"{/if}>
+        <button class="btn btn-default wishlist-product__all-to-cart">
+            <i class="fa fa-basket fa-fw"></i>
+            {l s='Add all to cart' mod='mwishlist'}
+        </button>
+    </div>
+
+    <div class="alert alert-danger  wishlist-alert" {if $wishlist->productsNb} style="display: none"{/if}>
+        {l s='No products for this time.' mod='mwishlist'}
+    </div>
+
     <div class="my-wishlist__wrapper">
         {foreach from=$wishlist->products item=product}
             <article class="wishlist-product row">
                 <div class="wishlist-product__image col-md-3 col-xs-6">
-                    <img class="img-responsive" src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'large_default')|escape:'html':'UTF-8'}" alt="{if !empty($product.legend)}{$product.legend|escape:'html':'UTF-8'}{else}{$product.name|escape:'html':'UTF-8'}{/if}"/>
+                    <a class="wishlist-product__link" href="{$product.link|escape:'html':'UTF-8'}" title="{$product.name|escape:'html':'UTF-8'}">
+                        <img class="img-responsive" src="{$link->getImageLink($product.link_rewrite, $product.id_image, 'large_default')|escape:'html':'UTF-8'}" alt="{if !empty($product.legend)}{$product.legend|escape:'html':'UTF-8'}{else}{$product.name|escape:'html':'UTF-8'}{/if}"/>
+                    </a>
                 </div>
                 <div class="wishlist-product__wrapper col-md-7 col-xs-5">
-                    <h3 class="wishlist-product__name">{$product.name}</h3>
-                    
-                    
+                    <a class="wishlist-product__link" href="{$product.link|escape:'html':'UTF-8'}" title="{$product.name|escape:'html':'UTF-8'}">
+                        <h3 class="wishlist-product__name">{$product.name}</h3>
+                    </a>
                     <div class="row">
                         {if (!$PS_CATALOG_MODE && ((isset($product.show_price) && $product.show_price) || (isset($product.available_for_order) && $product.available_for_order)))}
                         <div class="col-md-3 col-xs-3 wishlist-product__price">
@@ -43,7 +56,7 @@
                     </button>
                 </div>
                 <div class="col-md-2">
-                    <button class="ajax_add_to_cart_button btn btn-default" data-id-product="{$product.id_product}">
+                    <button class="btn btn-default wishlist-product__add-to-cart" data-id-product="{$product.id_product}">
                         <i class="fa fa-basket fa-fw"></i>
                         {l s='Add to cart' mod='mwishlist'}
                     </button>

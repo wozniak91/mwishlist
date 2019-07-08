@@ -74,7 +74,7 @@ class Mwishlist extends Module
             $this->registerHook('backOfficeHeader') &&
             $this->registerHook('displayHeader') &&
             $this->registerHook('displayTop') &&
-            $this->registerHook('displayProductListReviews');
+            $this->registerHook('displayProductListWishlist');
     }
 
     public function uninstall()
@@ -249,7 +249,7 @@ class Mwishlist extends Module
         return $this->display(__FILE__, 'views/templates/hook/mwishlist.tpl');
     }
 
-    public function hookDisplayProductListReviews($params) {
+    public function hookDisplayProductListWishlist($params) {
 
         $id_product = $params['product']['id_product'];
 

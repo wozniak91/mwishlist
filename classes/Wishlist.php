@@ -56,21 +56,26 @@ class Wishlist extends ObjectModel
          
         return Db::getInstance()->getValue($sql);
     }
-    
+
     public function addProduct($id_product) {
 
         if($this->checkProductStatus($id_product))
             return false;
 
-        if($result = Db::getInstance()->insert('mwishlist_products', array(
-            'id_wishlist'   => (int)$this->id,
-            'id_product'    => (int)$id_product,
-        ))) {
-            $this->productsNb = $this->getProductNb();
-            return $result;
+        if(Db::getInstance()->getValue('SELECT count(id_product) FROM `'._DB_PREFIX_.'product` WHERE id_product = ' . (int)$id_product)) {
+            if($result = Db::getInstance()->insert('mwishlist_products', array(
+                'id_wishlist'   => (int)$this->id,
+                'id_product'    => (int)$id_product,
+            ))) {
+                $this->productsNb = $this->getProductNb();
+                return $result;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
+
         
     }
 
