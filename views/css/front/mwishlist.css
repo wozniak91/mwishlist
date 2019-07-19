@@ -54,6 +54,7 @@
     font-size: 20px;
     outline: transparent;
     transition: color .25s ease;
+    cursor: pointer;
     backface-visibility: hidden;
     will-change: transform;
     -webkit-font-smoothing: subpixel-antialiased;
@@ -61,7 +62,7 @@
 }
 .wishlist__button--liked {
     color: #e50000;
-    animation: heartBeat 1s both;
+    animation: heartBeat .6s both;
 }
 .wishlist-product {
     display: flex;
@@ -115,13 +116,13 @@
         transform: translateY(-100%) scale(1);
     }
     25% {
-        transform: translateY(-100%) scale(1.02);
+        transform: translateY(-100%) scale(1.03);
     }
     50% {
         transform: translateY(-100%) scale(.9);
     }
     75% {
-        transform: translateY(-100%) scale(1.04);
+        transform: translateY(-100%) scale(1.05);
     }
     100% {
         transform: translateY(-100%) scale(1);

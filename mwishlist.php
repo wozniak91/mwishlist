@@ -237,6 +237,7 @@ class Mwishlist extends Module
 
     public function hookDisplayTop()
     {
+
         if($this->context->cookie->id_wishlist) {
             $id_wishlist = (int)$this->context->cookie->id_wishlist;
             $wishlist = new Wishlist($id_wishlist);
@@ -251,16 +252,17 @@ class Mwishlist extends Module
 
     public function hookDisplayProductListWishlist($params) {
 
-        $id_product = $params['product']['id_product'];
+        $id_product = Validate::isLoadedObject($params['product']) ? $params['product']->id : $params['product']['id_product'];
+        
+        $this->context->smarty->clearCompiledTemplate('mwishlist_reviews.tpl');
 
         if($this->context->cookie->id_wishlist) {
             $id_wishlist = (int)$this->context->cookie->id_wishlist;
             $wishlist = new Wishlist($id_wishlist);
+            $isLiked = $wishlist->checkProductStatus($id_product);
         } else {
-            $wishlist = new Wishlist;
+            $isLiked = false;
         }
-
-        $isLiked = $wishlist->checkProductStatus($id_product);
 
         $this->context->smarty->assign([
             'id_product' => $id_product,

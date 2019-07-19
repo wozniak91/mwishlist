@@ -4,30 +4,27 @@ $(document).ready(function() {
     ajaxWishlist = new Wishlist('wishlist__icon', 'wishlist__counter');
 });
 
-$(document).on('click', '.wishlist__button', function() {
+$(document).on('click touchstart', '.wishlist__button', function() {
     var id_product = $(this).attr('data-id-product');
     ajaxWishlist.toggle(id_product, $(this));
 });
 
-$(document).on('click', '.wishlist-product__remove', function() {
+$(document).on('click touchstart', '.wishlist-product__remove', function() {
     var id_product = $(this).attr('data-id-product');
     ajaxWishlist.remove(id_product, $(this));
 });
 
-$(document).on('click', '.wishlist-product__add-to-cart', function() {
+$(document).on('click touchstart', '.wishlist-product__add-to-cart', function() {
     var id_product = $(this).attr('data-id-product');
     ajaxWishlist.addToCart(id_product);
-})
+});
 
-$(document).on('click', '.wishlist-product__all-to-cart', function() {
+$(document).on('click touchstart', '.wishlist-product__all-to-cart', function() {
     $('.wishlist-product__add-to-cart').each(function() {
         var id_product = $(this).attr('data-id-product');
         ajaxWishlist.addToCart(id_product, true);
     });
-
-})
-
-
+});
 
 var Wishlist = function(iconClass, counterClass) {
     this.productsNb = 0;

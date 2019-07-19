@@ -52,7 +52,7 @@ class Wishlist extends ObjectModel
 
         $sql = 'SELECT count(wp.id_product) FROM `'._DB_PREFIX_.'mwishlist_products` wp 
             LEFT JOIN `'._DB_PREFIX_.'product` p ON (p.`id_product` = wp.`id_product`)
-            WHERE wp.`id_product` = ' . (int)$id_product . ' AND p.`active` = 1';
+            WHERE wp.`id_product` = ' . (int)$id_product . ' AND p.`active` = 1 AND wp.`id_wishlist` = '.(int)$this->id;
          
         return Db::getInstance()->getValue($sql);
     }

@@ -1,10 +1,10 @@
 <div class="my-wishlist">
     <h1 class="page-heading">{l s='My wishlist' mod='mwishlist'}</h1>
     <div class="my-wishlist__actions"{if !$wishlist->productsNb} style="display: none"{/if}>
-        <button class="btn btn-default wishlist-product__all-to-cart">
+        {* <button class="btn btn-default wishlist-product__all-to-cart">
             <i class="fa fa-basket fa-fw"></i>
             {l s='Add all to cart' mod='mwishlist'}
-        </button>
+        </button> *}
     </div>
 
     <div class="alert alert-danger  wishlist-alert" {if $wishlist->productsNb} style="display: none"{/if}>
