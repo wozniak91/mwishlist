@@ -70,7 +70,7 @@ Wishlist.prototype.remove = function(id_product, el = false) {
                 _this.productsNb = json.wishlist.productsNb;
                 _this.refresh();
                 if(el) {
-                    el.parent().parent().remove();
+                    $('#wishlist_product_' + id_product).fadeOut();
                 }
 
             }
@@ -95,6 +95,7 @@ Wishlist.prototype.toggle = function(id_product, el = false) {
                 _this.refresh();
                 if(el) {
                     el.toggleClass('wishlist__button--liked');
+                    $('#wishlist_info_' + id_product).text(json.msg);
                 }
             }
         }

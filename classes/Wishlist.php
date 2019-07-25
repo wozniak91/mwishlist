@@ -79,6 +79,14 @@ class Wishlist extends ObjectModel
         
     }
 
+
+    public static function getWishlistIdByCustomerId($id_customer) {
+
+        $sql = 'SELECT id_wishlist FROM `'._DB_PREFIX_.'mwishlist` WHERE id_customer = '.(int)$id_customer;
+
+        return Db::getInstance()->getValue($sql);
+    }
+
     public function removeProduct($id_product) {
 
         if($result = Db::getInstance()->delete('mwishlist_products', 'id_wishlist = '.(int)$this->id.' AND id_product = '.(int)$id_product)) {
@@ -127,6 +135,12 @@ class Wishlist extends ObjectModel
 
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql, true, false);
         return Product::getProductsProperties($id_lang, $result);
+
+    }
+
+    public static function getProductLikesCount($id_product) {
+
+        return Db::getInstance()->getValue('SELECT count(id_product) FROM `'._DB_PREFIX_.'mwishlist_products` WHERE id_product = '.(int)$id_product);
 
     }
 

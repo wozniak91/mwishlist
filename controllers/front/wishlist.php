@@ -16,7 +16,12 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
 
         $this->context = Context::getContext();
 
-        if($id_wishlist = $this->context->cookie->id_wishlist) {
+        if($id_wishlist = Wishlist::getWishlistIdByCustomerId($this->context->customer->id)) {
+
+            $wishlist = new Wishlist((int)$id_wishlist);
+            $this->context->cookie->__set('id_wishlist', $wishlist->id);
+
+        } elseif ($id_wishlist = $this->context->cookie->id_wishlist) {
             $wishlist = new Wishlist((int)$id_wishlist);
         } else {
             $wishlist = new Wishlist;
@@ -57,7 +62,12 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
     public function ajaxProcessAddProduct()
     {
 
-        if($id_wishlist = $this->context->cookie->id_wishlist) {
+        if($id_wishlist = Wishlist::getWishlistIdByCustomerId($this->context->customer->id)) {
+
+            $wishlist = new Wishlist((int)$id_wishlist);
+            $this->context->cookie->__set('id_wishlist', $wishlist->id);
+
+        } elseif ($id_wishlist = $this->context->cookie->id_wishlist) {
 
             $wishlist = new Wishlist((int)$id_wishlist);
 
@@ -93,8 +103,22 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
     
     public function ajaxProcessRemoveProduct()
     {
+        
+        if($id_wishlist = Wishlist::getWishlistIdByCustomerId($this->context->customer->id)) {
 
-        if($id_wishlist = $this->context->cookie->id_wishlist) {
+            $wishlist = new Wishlist((int)$id_wishlist);
+            $this->context->cookie->__set('id_wishlist', $wishlist->id);
+
+            if(Tools::getIsset('id_product')) {
+                $id_product = Tools::getValue('id_product');
+                $wishlist->removeProduct((int)$id_product);
+            }
+            $result = [
+                'hasError' => false,
+                'wishlist' => $wishlist,
+            ];
+
+        } elseif($id_wishlist = $this->context->cookie->id_wishlist) {
 
             $wishlist = new Wishlist((int)$id_wishlist);
 
@@ -123,16 +147,31 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
 
         $status = false;
 
-        if($id_wishlist = $this->context->cookie->id_wishlist) {
+        if($id_wishlist = Wishlist::getWishlistIdByCustomerId($this->context->customer->id)) {
 
             $wishlist = new Wishlist((int)$id_wishlist);
+            $this->context->cookie->__set('id_wishlist', $wishlist->id);
+
+        } elseif($id_wishlist = $this->context->cookie->id_wishlist) {
+
+            $wishlist = new Wishlist((int)$id_wishlist);
+
+            if($id_customer = $this->context->customer->id) {
+                $wishlist->id_customer = $this->context->customer->id;
+                $wishlist->save();
+            }
+
         } else {
 
             $wishlist = new Wishlist;
-            $wishlist->id_customer = $this->context->customer->id;
             $wishlist->secure_key = md5(uniqid(rand(), true));
             $wishlist->add();
             $this->context->cookie->__set('id_wishlist', $wishlist->id);
+        }
+
+        if($id_customer = $this->context->customer->id) {
+            $wishlist->id_customer = $this->context->customer->id;
+            $wishlist->save();
         }
         
         if(Tools::getIsset('id_product')) {
@@ -149,11 +188,14 @@ class MwishlistWishlistModuleFrontController extends ModuleFrontController
         if($status) {
             $result = [
                 'hasError' => false,
+                'id_customer' => Wishlist::getWishlistIdByCustomerId($this->context->customer->id),
                 'wishlist' => $wishlist,
+                'msg' => sprintf($this->module->l('Likes count: %d'), Wishlist::getProductLikesCount($id_product))
             ];
         } else {
             $result = [
                 'hasError' => true,
+                'id_customer' => $this->context->customer->id,
                 'error' => $this->module->l('You do not have a wish list')
             ];  
         }
